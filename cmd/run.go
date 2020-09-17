@@ -14,14 +14,13 @@ var rootCmd = &cobra.Command{
 	Use:   "states",
 	Short: "states for lb tier 1 😉",
 	Run: func(cmd *cobra.Command, args []string) {
-
-		// validate fields
 		logging.WithFields(logrus.Fields{
 			"config file path":          viperConfig.GetString(configFilePathName),
 			"rest API url":              viperConfig.GetString(urlName),
 			"login":                     viperConfig.GetString(nlbLoginName),
 			"auto merge":                viperConfig.GetBool(autoMergeName),
 			"Mode for IP + port search": viperConfig.GetString(ipAndPortSearchModeName),
+			"Selected columns":          selectedColumns,
 			"password":                  "***",
 		}).Info("")
 
@@ -32,8 +31,14 @@ var rootCmd = &cobra.Command{
 		if err != nil {
 			logging.Fatalf("api request to lb tier 1 error: %v", err)
 		}
-		services := api.ModifyServicesToSliceOfStringSlices(rawServices, viperConfig.GetString(ipAndPortSearchModeName))
-		tables.RenderAllTableData(services, viperConfig.GetString(urlName), viperConfig.GetBool(autoMergeName))
+		services := api.ModifyServicesToSliceOfStringSlices(rawServices, viperConfig.GetString(ipAndPortSearchModeName), defaultColumnsHeaders)
+
+		if len(viperConfig.GetStringSlice(selectedColumnsName)) == 0 {
+			tables.RenderTableData(services, viperConfig.GetString(urlName), viperConfig.GetBool(autoMergeName), defaultColumnsHeaders)
+		} else {
+			tables.RenderCustomTableData(services, viperConfig.GetString(urlName), viperConfig.GetBool(autoMergeName), selectedColumns, defaultColumnsHeaders)
+		}
+		os.Exit(0)
 	},
 }
 

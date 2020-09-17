@@ -1,10 +1,11 @@
 package api
 
-func ModifyServicesToSliceOfStringSlices(services []Service, ipAndPortSearchMode string) [][]string {
+func ModifyServicesToSliceOfStringSlices(services []Service, ipAndPortSearchMode string, columnsHeaders []string) [][]string {
 	if len(services) == 0 {
 		return nil
 	}
 
+	//TODO: remove all append functions
 	preparedData := [][]string{}
 	if ipAndPortSearchMode != "nope" {
 		// TODO: refator that, below same code
@@ -28,6 +29,8 @@ func ModifyServicesToSliceOfStringSlices(services []Service, ipAndPortSearchMode
 		repeatHealthcheck := service.Healthcheck.RepeatHealthcheck.String()
 		tAndR := timeout + "/" + repeatHealthcheck
 		protocol := service.Protocol
+
+		preparedData := make([][]string, len(service.ApplicationServers))
 		for _, applicationServer := range service.ApplicationServers {
 			appSrvIPPort := applicationServer.ServerIP + ":" + applicationServer.ServerPort
 			serverState := ""
@@ -78,7 +81,7 @@ func ModifyServicesToSliceOfStringSlices(services []Service, ipAndPortSearchMode
 			preparedData = append(preparedData, data)
 		}
 		if i != len(services)-1 {
-			emptyTableData := []string{"VIP", "SRV STATE", "REAL", "HEALTH", "PROTO", "ROUTING", "TYPE", "HC TYPE", "HC ADDR", "HC TIMERS"} // TODO: names
+			emptyTableData := columnsHeaders
 			preparedData = append(preparedData, emptyTableData)
 		}
 	}
