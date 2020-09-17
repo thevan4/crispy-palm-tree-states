@@ -30,7 +30,6 @@ func ModifyServicesToSliceOfStringSlices(services []Service, ipAndPortSearchMode
 		tAndR := timeout + "/" + repeatHealthcheck
 		protocol := service.Protocol
 
-		preparedData := make([][]string, len(service.ApplicationServers))
 		for _, applicationServer := range service.ApplicationServers {
 			appSrvIPPort := applicationServer.ServerIP + ":" + applicationServer.ServerPort
 			serverState := ""
