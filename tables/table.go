@@ -7,7 +7,7 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
-func RenderTable(data [][]string, url string, autoMerge bool) {
+func RenderAllTableData(data [][]string, url string, autoMerge bool) {
 	if len(data) == 0 {
 		fmt.Printf("no services was found at %v\r\n", url)
 		return
@@ -22,6 +22,20 @@ func RenderTable(data [][]string, url string, autoMerge bool) {
 	}
 	table.SetAlignment(tablewriter.ALIGN_CENTER)
 	table.SetRowLine(true)
-	table.AppendBulk(data)
+	for _, d := range data {
+		twService := tablewriter.Colors{}
+		twServer := tablewriter.Colors{}
+		if d[1] == "UP" {
+			twService = tablewriter.Colors{tablewriter.Normal, tablewriter.FgGreenColor}
+		} else if d[1] == "DOWN" {
+			twService = tablewriter.Colors{tablewriter.Normal, tablewriter.FgRedColor}
+		}
+		if d[3] == "UP" {
+			twServer = tablewriter.Colors{tablewriter.Normal, tablewriter.FgGreenColor}
+		} else if d[3] == "DOWN" {
+			twServer = tablewriter.Colors{tablewriter.Normal, tablewriter.FgRedColor}
+		}
+		table.Rich(d, []tablewriter.Colors{nil, twService, nil, twServer, nil, nil, nil, nil, nil, nil})
+	}
 	table.Render()
 }

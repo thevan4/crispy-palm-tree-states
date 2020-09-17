@@ -33,7 +33,7 @@ var rootCmd = &cobra.Command{
 			logging.Fatalf("api request to lb tier 1 error: %v", err)
 		}
 		services := api.ModifyServicesToSliceOfStringSlices(rawServices, viperConfig.GetString(ipAndPortSearchModeName))
-		tables.RenderTable(services, viperConfig.GetString(urlName), viperConfig.GetBool(autoMergeName))
+		tables.RenderAllTableData(services, viperConfig.GetString(urlName), viperConfig.GetBool(autoMergeName))
 	},
 }
 
