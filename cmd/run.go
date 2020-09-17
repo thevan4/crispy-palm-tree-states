@@ -17,11 +17,12 @@ var rootCmd = &cobra.Command{
 
 		// validate fields
 		logging.WithFields(logrus.Fields{
-			"config file path": viperConfig.GetString(configFilePathName),
-			"rest API url":     viperConfig.GetString(urlName),
-			"login":            viperConfig.GetString(nlbLoginName),
-			"auto merge":       viperConfig.GetBool(autoMergeName),
-			"password":         "***",
+			"config file path":          viperConfig.GetString(configFilePathName),
+			"rest API url":              viperConfig.GetString(urlName),
+			"login":                     viperConfig.GetString(nlbLoginName),
+			"auto merge":                viperConfig.GetBool(autoMergeName),
+			"Mode for IP + port search": viperConfig.GetString(ipAndPortSearchModeName),
+			"password":                  "***",
 		}).Info("")
 
 		req := api.NewApiRequests(viperConfig.GetString(urlName),
@@ -31,7 +32,7 @@ var rootCmd = &cobra.Command{
 		if err != nil {
 			logging.Fatalf("api request to lb tier 1 error: %v", err)
 		}
-		services := api.ModifyServicesToSliceOfStringSlices(rawServices)
+		services := api.ModifyServicesToSliceOfStringSlices(rawServices, viperConfig.GetString(ipAndPortSearchModeName))
 		tables.RenderTable(services, viperConfig.GetString(urlName), viperConfig.GetBool(autoMergeName))
 	},
 }

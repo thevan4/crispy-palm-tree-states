@@ -22,11 +22,13 @@ const (
 
 // Config names
 const (
-	configFilePathName = "states-config-file-path"
-	urlName            = "nlb-url"
-	nlbLoginName       = "nlb-login"
-	nlbPasswordName    = "nlb-password"
-	autoMergeName      = "auto-merge"
+	configFilePathName         = "states-config-file-path"
+	urlName                    = "nlb-url"
+	nlbLoginName               = "nlb-login"
+	nlbPasswordName            = "nlb-password"
+	autoMergeName              = "auto-merge"
+	ipAndPortSearchModeName    = "ip-and-port-search"
+	defaultIPAndPortSearchMode = "nope"
 )
 
 var (
@@ -48,6 +50,8 @@ func init() {
 	pflag.StringP(nlbLoginName, "l", defaultLogin, "Login")
 	pflag.StringP(nlbPasswordName, "p", defaultPasword, "Password")
 	pflag.BoolP(autoMergeName, "a", defaultAutoMerge, "Auto merge cells")
+
+	pflag.StringP(ipAndPortSearchModeName, "o", defaultIPAndPortSearchMode, "Mode for IP + port search")
 
 	pflag.Parse()
 	if err := viperConfig.BindPFlags(pflag.CommandLine); err != nil {
@@ -80,9 +84,15 @@ func init() {
 
 	// required values are set
 	if viperConfig.GetString(nlbLoginName) == "" {
-		logging.Fatalf("login be set")
+		logging.Fatal("login be set")
 	}
 	if viperConfig.GetString(nlbPasswordName) == "" {
-		logging.Fatalf("password must be set")
+		logging.Fatal("password must be set")
+	}
+	if viperConfig.GetString(ipAndPortSearchModeName) != "nope" {
+		ipAndPortSlice := strings.Split(viperConfig.GetString(ipAndPortSearchModeName), ":")
+		if len(ipAndPortSlice) != 2 {
+			logging.Fatalf("wrong ip and port: %v; expected format 1.1.1.1:1111", viperConfig.GetString(ipAndPortSearchModeName))
+		}
 	}
 }
