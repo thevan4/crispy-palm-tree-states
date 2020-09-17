@@ -20,6 +20,7 @@ func RenderTable(data [][]string, url string, autoMerge bool) {
 	} else {
 		table.SetAutoMergeCellsByColumnIndex([]int{0})
 	}
+	table.SetAlignment(tablewriter.ALIGN_CENTER)
 	table.SetRowLine(true)
 	table.AppendBulk(data)
 	table.Render()

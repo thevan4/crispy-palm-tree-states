@@ -78,7 +78,7 @@ func ModifyServicesToSliceOfStringSlices(services []Service, ipAndPortSearchMode
 			preparedData = append(preparedData, data)
 		}
 		if i != len(services)-1 {
-			emptyTableData := []string{"", "", "", "", "", "", "", "", "", ""} // TODO: names
+			emptyTableData := []string{"VIP", "SRV STATE", "REAL", "HEALTH", "PROTO", "ROUTING", "TYPE", "HC TYPE", "HC ADDR", "HC TIMERS"} // TODO: names
 			preparedData = append(preparedData, emptyTableData)
 		}
 	}
