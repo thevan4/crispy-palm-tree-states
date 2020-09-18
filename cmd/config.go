@@ -110,6 +110,9 @@ func init() {
 			}
 			selectedColumns[i] = replacerForUserColumns(userColumn)
 		}
+		if !isValidSelectedColumns(selectedColumns) {
+			logging.Fatalf("same columns not supported: %v", selectedColumns)
+		}
 	}
 }
 
@@ -135,4 +138,16 @@ func replacerForUserColumns(userColumn string) string {
 	default:
 		return userColumn
 	}
+}
+
+func isValidSelectedColumns(userColumns []string) bool {
+	keys := make(map[string]struct{})
+	for _, userColumn := range userColumns {
+		if _, exist := keys[userColumn]; !exist {
+			keys[userColumn] = struct{}{}
+		} else {
+			return false
+		}
+	}
+	return true
 }
