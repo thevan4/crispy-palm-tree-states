@@ -23,7 +23,7 @@ func RenderTableData(data [][]string, url string, autoMerge bool, defaultColumns
 	if autoMerge {
 		table.SetAutoMergeCellsByColumnIndex([]int{0, 1, 4, 5, 6, 7, 9})
 	} else {
-		table.SetAutoMergeCellsByColumnIndex([]int{0})
+		table.SetAutoMergeCellsByColumnIndex([]int{0, 1})
 	}
 	table.SetAlignment(tablewriter.ALIGN_CENTER)
 	table.SetRowLine(true)
@@ -52,16 +52,11 @@ func RenderCustomTableData(data [][]string, url string, autoMerge bool, selected
 	}
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader(selectedColumns)
-	if autoMerge {
-		table.SetAutoMergeCellsByColumnIndex([]int{0, 1, 4, 5, 6, 7, 9})
-	} else {
-		table.SetAutoMergeCellsByColumnIndex([]int{0})
-	}
+
 	table.SetAlignment(tablewriter.ALIGN_CENTER)
 	table.SetRowLine(true)
 
 	//
-
 	var serviceStateNewIndex, serverStateNewIndex int
 	reindexes := make([]reindex, len(selectedColumns))
 	for i, newColumn := range selectedColumns {
@@ -103,6 +98,12 @@ func RenderCustomTableData(data [][]string, url string, autoMerge bool, selected
 		tablewriterColors[serviceStateNewIndex] = twService
 		tablewriterColors[serverStateNewIndex] = twServer
 		table.Rich(d, tablewriterColors)
+	}
+
+	if autoMerge {
+		table.SetAutoMergeCellsByColumnIndex([]int{0, 1, 4, 5, 6, 7, 9})
+	} else {
+		table.SetAutoMergeCellsByColumnIndex([]int{serviceStateNewIndex, serverStateNewIndex})
 	}
 	table.Render()
 }
