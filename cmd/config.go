@@ -88,13 +88,13 @@ func init() {
 		os.Exit(1)
 	}
 
-	// required values are set
-	if viperConfig.GetString(nlbLoginName) == "" {
-		logging.Fatal("login be set")
-	}
-	if viperConfig.GetString(nlbPasswordName) == "" {
-		logging.Fatal("password must be set")
-	}
+	// // required values are set
+	// if viperConfig.GetString(nlbLoginName) == "" {
+	// 	logging.Fatal("login be set")
+	// }
+	// if viperConfig.GetString(nlbPasswordName) == "" {
+	// 	logging.Fatal("password must be set")
+	// }
 	if viperConfig.GetString(ipAndPortSearchModeName) != "nope" {
 		ipAndPortSlice := strings.Split(viperConfig.GetString(ipAndPortSearchModeName), ":")
 		if len(ipAndPortSlice) != 2 {

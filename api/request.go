@@ -26,11 +26,11 @@ func NewApiRequests(url, user, password string) *ApiRequests {
 }
 
 func (apiRequests *ApiRequests) RequestServiceStates() ([]Service, error) {
-	token, err := apiRequests.requestToken()
-	if err != nil {
-		return nil, fmt.Errorf("token request error:%v", err)
-	}
-	services, err := apiRequests.requestServices(token)
+	// token, err := apiRequests.requestToken()
+	// if err != nil {
+	// 	return nil, fmt.Errorf("token request error:%v", err)
+	// }
+	services, err := apiRequests.requestServices()
 	if err != nil {
 		return nil, err
 	}
@@ -84,33 +84,33 @@ func (apiRequests *ApiRequests) requestToken() (string, error) {
 	return tokenResponseOkay.AccessToken, nil
 }
 
-func (apiRequests *ApiRequests) requestServices(token string) ([]Service, error) {
-	getServicesRequest := &GetServicesRequest{
-		ID: uuid,
-	}
-	servicesRequest, err := json.Marshal(getServicesRequest)
-	if err != nil {
-		return nil, err
-	}
+func (apiRequests *ApiRequests) requestServices() ([]Service, error) {
+	// getServicesRequest := &GetServicesRequest{
+	// 	ID: uuid,
+	// }
+	// servicesRequest, err := json.Marshal(getServicesRequest)
+	// if err != nil {
+	// 	return nil, err
+	// }
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true}, //TODO: don't skip tls verify
 	}
 	client := &http.Client{Transport: tr}
-	reqPost, err := http.NewRequest("POST", apiRequests.url+"service/get-services", bytes.NewBuffer(servicesRequest))
+	reqSendGet, err := http.NewRequest("GET", apiRequests.url+"services", nil)
 	if err != nil {
 		return nil, fmt.Errorf("request services error: %v", err)
 	}
-	bearer := "Bearer " + token
-	reqPost.Header.Add("Authorization", bearer)
-	reqPost.Header.Add("Content-Type", "application/json")
+	// bearer := "Bearer " + token
+	// reqSendGet.Header.Add("Authorization", bearer)
+	// reqSendGet.Header.Add("Content-Type", "application/json")
 
-	reqGet, err := client.Do(reqPost)
+	reqReadGet, err := client.Do(reqSendGet)
 	if err != nil {
 		return nil, err
 	}
-	defer reqGet.Body.Close()
+	defer reqReadGet.Body.Close()
 
-	bodyBytesGet, err := ioutil.ReadAll(reqGet.Body)
+	bodyBytesGet, err := ioutil.ReadAll(reqReadGet.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -118,9 +118,6 @@ func (apiRequests *ApiRequests) requestServices(token string) ([]Service, error)
 	getAllServicesResponse := &GetAllServicesResponse{}
 	if err = json.Unmarshal(bodyBytesGet, getAllServicesResponse); err != nil {
 		return nil, fmt.Errorf("get all services unmarshal error: %v", err)
-	}
-	if !getAllServicesResponse.JobCompletedSuccessfully {
-		return nil, fmt.Errorf("can't get all services: %v", getAllServicesResponse.ExtraInfo)
 	}
 
 	return getAllServicesResponse.AllServices, nil

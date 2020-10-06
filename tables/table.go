@@ -1,7 +1,6 @@
 package tables
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/olekukonko/tablewriter"
@@ -13,11 +12,6 @@ type reindex struct {
 }
 
 func RenderTableData(data [][]string, url string, autoMerge bool, defaultColumnsHeaders []string) {
-	if len(data) == 0 {
-		fmt.Printf("no services was found at %v\r\n", url)
-		return
-	}
-
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader(defaultColumnsHeaders)
 	if autoMerge {
@@ -46,10 +40,6 @@ func RenderTableData(data [][]string, url string, autoMerge bool, defaultColumns
 }
 
 func RenderCustomTableData(data [][]string, url string, autoMerge bool, selectedColumns []string, defaultColumnsHeaders []string) {
-	if len(data) == 0 {
-		fmt.Printf("no services was found at %v\r\n", url)
-		return
-	}
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader(selectedColumns)
 

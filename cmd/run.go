@@ -31,6 +31,10 @@ var rootCmd = &cobra.Command{
 		if err != nil {
 			logging.Fatalf("api request to lb tier 1 error: %v", err)
 		}
+		if len(rawServices) == 0 {
+			fmt.Printf("no services was found at %v\r\n", viperConfig.GetString(urlName))
+			os.Exit(0)
+		}
 		services := api.ModifyServicesToSliceOfStringSlices(rawServices, viperConfig.GetString(ipAndPortSearchModeName), defaultColumnsHeaders)
 
 		if len(viperConfig.GetStringSlice(selectedColumnsName)) == 0 {

@@ -10,7 +10,7 @@ func ModifyServicesToSliceOfStringSlices(services []Service, ipAndPortSearchMode
 	if ipAndPortSearchMode != "nope" {
 		// TODO: refator that, below same code
 		service := findServiceForIPAndPortSearchMode(services, ipAndPortSearchMode)
-		vip := service.ServiceIP + ":" + service.ServicePort
+		vip := service.IP + ":" + service.Port
 		serviceState := ""
 		if service.IsUp {
 			serviceState = "UP"
@@ -25,21 +25,21 @@ func ModifyServicesToSliceOfStringSlices(services []Service, ipAndPortSearchMode
 		case "tunneling":
 			routingType = "tun"
 		}
-		timeout := service.Healthcheck.Timeout.String()
-		repeatHealthcheck := service.Healthcheck.RepeatHealthcheck.String()
+		timeout := service.HCTimeout.String()
+		repeatHealthcheck := service.HCRepeat.String()
 		tAndR := timeout + "/" + repeatHealthcheck
 		protocol := service.Protocol
 
 		for _, applicationServer := range service.ApplicationServers {
-			appSrvIPPort := applicationServer.ServerIP + ":" + applicationServer.ServerPort
+			appSrvIPPort := applicationServer.IP + ":" + applicationServer.Port
 			serverState := ""
 			if applicationServer.IsUp {
 				serverState = "UP"
 			} else {
 				serverState = "DOWN"
 			}
-			srvHCType := service.Healthcheck.Type
-			srvHCAddr := applicationServer.ServerHealthcheck.HealthcheckAddress
+			srvHCType := service.HCType
+			srvHCAddr := applicationServer.HCAddress
 			data := []string{vip, serviceState, appSrvIPPort, serverState, protocol, routingType, balanceType, srvHCType, srvHCAddr, tAndR}
 			preparedData = append(preparedData, data)
 		}
@@ -47,7 +47,7 @@ func ModifyServicesToSliceOfStringSlices(services []Service, ipAndPortSearchMode
 	}
 
 	for i, service := range services {
-		vip := service.ServiceIP + ":" + service.ServicePort
+		vip := service.IP + ":" + service.Port
 		serviceState := ""
 		if service.IsUp {
 			serviceState = "UP"
@@ -62,20 +62,20 @@ func ModifyServicesToSliceOfStringSlices(services []Service, ipAndPortSearchMode
 		case "tunneling":
 			routingType = "tun"
 		}
-		timeout := service.Healthcheck.Timeout.String()
-		repeatHealthcheck := service.Healthcheck.RepeatHealthcheck.String()
+		timeout := service.HCTimeout.String()
+		repeatHealthcheck := service.HCRepeat.String()
 		tAndR := timeout + "/" + repeatHealthcheck
 		protocol := service.Protocol
 		for _, applicationServer := range service.ApplicationServers {
-			appSrvIPPort := applicationServer.ServerIP + ":" + applicationServer.ServerPort
+			appSrvIPPort := applicationServer.IP + ":" + applicationServer.Port
 			serverState := ""
 			if applicationServer.IsUp {
 				serverState = "UP"
 			} else {
 				serverState = "DOWN"
 			}
-			srvHCType := service.Healthcheck.Type
-			srvHCAddr := applicationServer.ServerHealthcheck.HealthcheckAddress
+			srvHCType := service.HCType
+			srvHCAddr := applicationServer.HCAddress
 			data := []string{vip, serviceState, appSrvIPPort, serverState, protocol, routingType, balanceType, srvHCType, srvHCAddr, tAndR}
 			preparedData = append(preparedData, data)
 		}
@@ -89,11 +89,11 @@ func ModifyServicesToSliceOfStringSlices(services []Service, ipAndPortSearchMode
 
 func findServiceForIPAndPortSearchMode(services []Service, ipAndPortSearchMode string) *Service {
 	for _, service := range services {
-		if service.ServiceIP+":"+service.ServicePort == ipAndPortSearchMode {
+		if service.IP+":"+service.Port == ipAndPortSearchMode {
 			return &service
 		}
 		for _, applicationServer := range service.ApplicationServers {
-			if applicationServer.ServerIP+":"+applicationServer.ServerPort == ipAndPortSearchMode {
+			if applicationServer.IP+":"+applicationServer.Port == ipAndPortSearchMode {
 				return &service
 			}
 		}
